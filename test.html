@@ -6,127 +6,96 @@
     <title>SCL-90 心理健康测评</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- Final "Elegant Lake Green" Theme (v1.2 Polished) --- */
+        /* --- Final "Mobile First" Polished Theme v2.0 --- */
         :root {
-            --primary-green: #2db795;
-            --primary-green-dark: #249d7f;
-            --bg-color: #f6fbf9;
-            --text-color: #2a3f38;
-            --text-secondary: #5c6e66;
-            --border-color: #e2e8e5;
-            --card-bg: #ffffff;
-            --error-color: #e57373;
+            --primary-green: #2db795; --primary-green-dark: #249d7f; --bg-color: #f6fbf9;
+            --text-color: #2a3f38; --text-secondary: #5c6e66; --border-color: #e2e8e5;
+            --card-bg: #ffffff; --error-color: #e57373;
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
         }
-
         body { font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color); line-height: 1.7; margin: 0; padding: 20px 0; }
         .container { max-width: 800px; margin: 0 auto; padding: 0 15px; }
         .card { background-color: var(--card-bg); border-radius: 22px; padding: 35px 40px; box-shadow: 0 10px 40px rgba(45, 183, 149, 0.1); margin-bottom: 30px; border: 1px solid var(--border-color); }
         h1, h2, h3, h4 { color: var(--primary-green-dark); text-align: center; margin-top: 0; }
         h1 { font-size: 32px; margin-bottom: 15px; font-weight: 600; }
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: center; margin: 30px 0; }
-        .stat-box { background-color: #f8faf9; padding: 20px 15px; border-radius: 16px; }
-        .stat-box h4 { margin: 0 0 10px; font-size: 15px; color: var(--text-secondary); font-weight: 500; }
-        .stat-box p { font-size: 28px; font-weight: 600; color: var(--primary-green-dark); margin: 0; }
         .btn { background-image: linear-gradient(45deg, #2db795, #34d0a5); color: white; padding: 16px 25px; border: none; border-radius: 16px; cursor: pointer; font-size: 18px; font-weight: 600; text-align: center; transition: all 0.3s ease; width: 100%; box-sizing: border-box; box-shadow: 0 6px 18px rgba(45, 183, 149, 0.4); letter-spacing: 1.5px; }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 9px 22px rgba(45, 183, 149, 0.5); }
-        .btn:disabled { background-image: linear-gradient(45deg, #a4d9c9, #b0e0d0); cursor: not-allowed; box-shadow: none; }
+        .btn-secondary { background-image: none; background-color: #f0f2f1; color: var(--text-secondary); box-shadow: none; }
         #authScreen p { text-align: center; margin-bottom: 25px; font-size: 16px; }
         #authCode { width: 100%; padding: 15px; font-size: 18px; border-radius: 14px; border: 1px solid var(--border-color); box-sizing: border-box; margin-bottom: 25px; text-align: center; }
         .error-message { color: var(--error-color); text-align: center; margin-top: 15px; font-weight: 500; min-height: 24px; }
         
-        /* --- 【修改1】新增标题卡片居中样式 --- */
-        .title-card {
-            text-align: center;
-        }
-
-        .question-text { font-weight: 600; font-size: 18px; margin-bottom: 25px; }
-        .options-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 12px; }
-        .options-group label { cursor: pointer; padding: 12px; border-radius: 14px; background: #f8faf9; transition: all 0.2s; font-size: 16px; text-align: center; border: 1px solid var(--border-color); }
+        /* --- 【修改1】全新手机答题流程样式 --- */
+        #progress-container { width: 100%; background-color: #e0e0e0; border-radius: 5px; margin-bottom: 20px; }
+        #progress-bar { width: 0%; height: 10px; background-color: var(--primary-green); border-radius: 5px; transition: width 0.3s; }
+        #progress-text { text-align: center; margin-bottom: 20px; color: var(--text-secondary); }
+        .question-content { margin-bottom: 30px; }
+        .question-text { font-weight: 600; font-size: 1.2em; margin-bottom: 25px; text-align: center; }
+        .options-group { display: flex; flex-direction: column; gap: 15px; } /* 垂直排列 */
+        .options-group label { display: block; cursor: pointer; padding: 15px 20px; border-radius: 14px; background: #f8faf9; transition: all 0.2s; border: 1px solid var(--border-color); }
         .options-group input[type="radio"] { display: none; }
-        .options-group input[type="radio"]:checked + label { background-color: var(--primary-green); color: white; border-color: var(--primary-green); transform: scale(1.05); box-shadow: 0 5px 15px rgba(45, 183, 149, 0.3); }
+        .options-group input[type="radio"]:checked + label { background-color: var(--primary-green); color: white; border-color: var(--primary-green); transform: scale(1.02); box-shadow: 0 5px 15px rgba(45, 183, 149, 0.3); }
+        .navigation-buttons { display: flex; justify-content: space-between; gap: 15px; }
+        .navigation-buttons .btn { width: 100%; }
+
+        /* --- 【修改2 & 4 & 5】报告页响应式样式 --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: center; margin: 30px 0; }
+        .stat-box h4 { margin: 0 0 10px; font-size: 15px; color: var(--text-secondary); font-weight: 500; }
+        .stat-box p { font-size: 28px; font-weight: 600; color: var(--primary-green-dark); margin: 0; }
+        .responsive-table { width: 100%; border-collapse: collapse; }
+        .responsive-table thead { display: table-header-group; }
+        .responsive-table th, .responsive-table td { padding: 12px 15px; text-align: left; }
+        /* --- 【修改5】因子详解分割线 --- */
+        .explanation-advice { border-top: 1px solid var(--border-color); margin-top: 15px; padding-top: 15px; }
+        #radar-chart-container { position: relative; width: 100%; max-width: 500px; margin: 20px auto; aspect-ratio: 1 / 1; } /* 【修改3】 */
+        .grading-standard-table { width: 100%; border-collapse: separate; border-spacing: 5px; }
+        .grading-standard-table td { padding: 10px; border-radius: 8px; color: white; text-align: center; }
+
+        @media (max-width: 768px) {
+            .card { padding: 25px; }
+            h1 { font-size: 28px; }
+            /* --- 【修改2】因子评估表格响应式 --- */
+            .responsive-table thead { display: none; }
+            .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td { display: block; width: 100%; }
+            .responsive-table tr { margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; }
+            .responsive-table td { padding-left: 50%; position: relative; border-bottom: none; }
+            .responsive-table td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 45%;
+                font-weight: 600;
+                color: var(--text-color);
+            }
+            /* --- 【修改4】评分标准响应式 --- */
+            .grading-standard-table tr, .grading-standard-table td { display: block; width: auto; margin-bottom: 5px; }
+        }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div id="authScreen">
-            <div class="card">
-                <h1>SCL-90 心理健康测评</h1>
-                <p>请输入您的专属兑换码以开始测试。</p>
-                <input type="text" id="authCode" placeholder="在此输入兑换码" autocomplete="off">
-                <button class="btn" id="authButton" onclick="validateCode()">验证并开始</button>
-                <div id="authError" class="error-message"></div>
-            </div>
+            <div class="card"><h1>SCL-90 心理健康测评</h1><p>请输入您的专属兑换码以开始测试。</p><input type="text" id="authCode" placeholder="在此输入兑换码" autocomplete="off"><button class="btn" id="authButton" onclick="validateCode()">验证并开始</button><div id="authError" class="error-message"></div></div>
         </div>
         <div id="testScreen" style="display: none;"></div>
         <div id="resultScreen" style="display: none;"></div>
     </div>
 
     <script>
-        const authScreen = document.getElementById('authScreen');
-        const testScreen = document.getElementById('testScreen');
-        const resultScreen = document.getElementById('resultScreen');
-        const authCodeInput = document.getElementById('authCode');
-        const authButton = document.getElementById('authButton');
-        const authError = document.getElementById('authError');
-        const API_URL = 'https://scl90-backend.onrender.com';
-        let tempToken = null;
-        async function validateCode(){const e=authCodeInput.value.trim().toUpperCase();if(!e)return void(authError.textContent="请输入兑换码。");authButton.disabled=!0,authButton.textContent="验证中...",authError.textContent="";try{const t=await fetch(`${API_URL}/api/validate-code`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:e})}),s=await t.json();if(!t.ok)throw new Error(s.error||`请求失败，状态码: ${t.status}`);tempToken=s.tempToken,startTest()}catch(e){authError.textContent=e.message}finally{authButton.disabled=!1,authButton.textContent="验证并开始"}}
-        function startTest(){authScreen.style.display="none",renderQuestions(),testScreen.style.display="block"}
+        const authScreen=document.getElementById("authScreen"),testScreen=document.getElementById("testScreen"),resultScreen=document.getElementById("resultScreen"),authCodeInput=document.getElementById("authCode"),authButton=document.getElementById("authButton"),authError=document.getElementById("authError"),API_URL="https://scl90-backend.onrender.com";let tempToken=null;async function validateCode(){const e=authCodeInput.value.trim().toUpperCase();if(!e)return void(authError.textContent="请输入兑换码。");authButton.disabled=!0,authButton.textContent="验证中...",authError.textContent="";try{const t=await fetch(`${API_URL}/api/validate-code`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:e})}),s=await t.json();if(!t.ok)throw new Error(s.error||`请求失败，状态码: ${t.status}`);tempToken=s.tempToken,startTest()}catch(e){authError.textContent=e.message}finally{authButton.disabled=!1,authButton.textContent="验证并开始"}}
         const questions=[{id:1,text:"1. 头痛"},{id:2,text:"2. 神经过敏，心里不踏实"},{id:3,text:"3. 头脑中有不必要的想法或字句盘旋"},{id:4,text:"4. 头晕或昏倒"},{id:5,text:"5. 对异性的兴趣减退"},{id:6,text:"6. 对旁人责备求全"},{id:7,text:"7. 感到别人能控制您的思想"},{id:8,text:"8. 责怪别人制造麻烦"},{id:9,text:"9. 忘性大"},{id:10,text:"10. 担心自己的衣饰整齐及仪态的完美"},{id:11,text:"11.容易烦恼和激动"},{id:12,text:"12. 胸痛"},{id:13,text:"13. 害怕空旷的场所或街道"},{id:14,text:"14. 感到自己的精力下降，活动减慢"},{id:15,text:"15. 想结束自己的生命"},{id:16,text:"16. 听到旁人听不到的声音"},{id:17,text:"17. 发抖"},{id:18,text:"18. 感到大多数人都不可信任"},{id:19,text:"19. 胃口不好"},{id:20,text:"20. 容易哭泣"},{id:21,text:"21. 同异性相处时感到害羞不自在"},{id:22,text:"22. 感到受骗、中了圈套或有人想抓住您"},{id:23,text:"23. 无缘无故地突然感到害怕"},{id:24,text:"24. 自己不能控制地大发脾气"},{id:25,text:"25. 怕单独出门"},{id:26,text:"26. 经常责备自己"},{id:27,text:"27. 腰痛"},{id:28,text:"28. 感到难以完成任务"},{id:29,text:"29. 感到孤独"},{id:30,text:"30. 感到苦闷"},{id:31,text:"31. 过分担忧"},{id:32,text:"32. 对事物不感兴趣"},{id:33,text:"33. 感到害怕"},{id:34,text:"34. 我的感情容易受到伤害"},{id:35,text:"35. 旁人能知道您的私下想法"},{id:36,text:"36. 感到别人不理解您、不同情您"},{id:37,text:"37. 感到人们对您不友好，不喜欢您"},{id:38,text:"38. 做事必须做得很慢以保证做得正确"},{id:39,text:"39. 心跳得很厉害"},{id:40,text:"40. 恶心或胃部不舒服"},{id:41,text:"41. 感到比不上他人"},{id:42,text:"42. 肌肉酸痛"},{id:43,text:"43. 感到有人在监视您、谈论您"},{id:44,text:"44. 难以入睡"},{id:45,text:"45. 做事必须反复检查"},{id:46,text:"46. 难以做出决定"},{id:47,text:"47. 怕乘电车、公共汽车、地铁或火车"},{id:48,text:"48. 呼吸有困难"},{id:49,text:"49. 一阵阵发冷或发热"},{id:50,text:"50. 因为感到害怕而避开某些东西、场合或活动"},{id:51,text:"51. 脑子变空了"},{id:52,text:"52. 身体发麻或刺痛"},{id:53,text:"53. 喉咙有梗塞感"},{id:54,text:"54. 感到前途没有希望"},{id:55,text:"55. 不能集中注意力"},{id:56,text:"56. 感到身体的某一部分无力"},{id:57,text:"57. 感到紧张、被牵扯着"},{id:58,text:"58. 感到手或脚发重"},{id:59,text:"59. 想到死亡的事"},{id:60,text:"60. 吃得太多"},{id:61,text:"61. 当别人看着您或谈论您时感到不自在"},{id:62,text:"62. 有一些不属于您自己的想法"},{id:63,text:"63. 有想打人或伤害某人的冲动"},{id:64,text:"64. 醒得太早"},{id:65,text:"65. 必须重复同样的动作，如触摸、点数、洗手"},{id:66,text:"66. 睡得不稳不深"},{id:67,text:"67. 有想摔坏或打碎东西的冲动"},{id:68,text:"68. 有一些别人没有的古怪想法"},{id:69,text:"69. 总感到有人在盯着您"},{id:70,text:"70. 害怕呆在人群中，如商店、电影院"},{id:71,text:"71. 感到做什么事都很困难"},{id:72,text:"72. 阵阵恐惧或惊恐"},{id:73,text:"73. 感到在公共场合吃东西很不舒服"},{id:74,text:"74. 经常与人争论"},{id:75,text:"75. 单独一人时神经很紧张"},{id:76,text:"76. 别人对您的成绩没有做出恰当的评价"},{id:77,text:"77. 即使和别人在一起也感到孤单"},{id:78,text:"78. 感到坐立不安心神不定"},{id:79,text:"79. 感到自己没有什么价值"},{id:80,text:"80. 感到熟悉的东西变成陌生或不像是真的"},{id:81,text:"81. 大叫或摔东西"},{id:82,text:"82. 害怕在公共场合昏倒"},{id:83,text:"83. 感到别人想占您的便宜"},{id:84,text:"84. 为一些有关“性”的想法而苦恼"},{id:85,text:"85. 您认为应该因为自己的过错而受到惩罚"},{id:86,text:"86. 感到要很快赶到某个地方"},{id:87,text:"87. 感到自己的身体有严重问题"},{id:88,text:"88. 从未感到和其他人很亲近"},{id:89,text:"89. 感到负罪"},{id:90,text:"90. 感到自己的脑子有毛病"}];
         const options=[{text:"从无",score:1},{text:"轻度",score:2},{text:"中度",score:3},{text:"偏重",score:4},{text:"严重",score:5}];
-        
-        function renderQuestions(){
-            // --- 【修改1】给标题卡片添加 'title-card' 类 ---
-            let html = `<div class="card title-card"> 
-                            <h2>SCL-90 心理健康测评</h2>
-                            <p>请选择最符合您近一周感觉的选项。</p>
-                        </div>
-                        <form id="testForm">`;
-            questions.forEach(q => {
-                html += `<div class="card question-card"><p class="question-text">${q.text}</p><div class="options-group">`;
-                options.forEach(o => {
-                    const inputId = `q${q.id}_${o.score}`;
-                    html += `<input type="radio" id="${inputId}" name="q${q.id}" value="${o.score}" required><label for="${inputId}">${o.text}</label>`;
-                });
-                html += `</div></div>`;
-            });
-            html += `<div class="card"><button type="submit" class="btn">提交并查看结果</button></div></form>`;
-            testScreen.innerHTML = html;
-            document.getElementById('testForm').addEventListener('submit', handleSubmit);
-        }
-        
-        async function handleSubmit(e){e.preventDefault();testScreen.style.display="none";resultScreen.innerHTML=`<div class="card" style="text-align:center;"><h2>正在为您分析结果...</h2><div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-green); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;"></div></div><style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>`;resultScreen.style.display="block";const t=new FormData(e.target),s=[];for(const[e,n]of t.entries())s.push({id:e.substring(1),score:n});try{const e=await fetch(`${API_URL}/api/submit`,{method:"POST",headers:{"Content-Type":"application/json","x-auth-token":tempToken},body:JSON.stringify({answers:s})});if(!e.ok){const t=await e.json();throw new Error(t.error||`服务器错误: ${e.status}`)}const n=await e.json();displayResult(n)}catch(t){resultScreen.innerHTML=`<div class="card"><h2 style="color: var(--error-color);">分析失败</h2><p style="text-align:center;">无法连接到分析服务器或服务器返回错误。请检查您的网络连接，或稍后重试。<br><br><strong>错误详情:</strong> ${t.message}</p> <button class="btn" onclick="window.location.reload()" style="background-color: #888; background-image: none;">返回重试</button></div>`}}
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
 
-        function displayResult(result) {
-            const { stats, overallAssessment, factorDetails, detailedExplanations } = result;
-            
-            // --- **【修改2 & 3】** 精修结果解析文案 ---
-            const strengthFactors = factorDetails.filter(f => f.status.level === 'normal').map(f => `“${f.name}”`);
-            const attentionFactors = factorDetails.filter(f => f.status.level !== 'normal').map(f => `“${f.name}”`);
-
-            let analysisHtml = '';
-            if (strengthFactors.length > 0) {
-                analysisHtml += `<p>在本次评估中，您在 ${strengthFactors.join('、')} 等方面表现出色，心理状态稳定，这是您宝贵的内在资源和优势所在。请继续保持这些积极的状态！</p>`;
-            }
-            if (attentionFactors.length > 0) {
-                analysisHtml += `<p>结果提示您近期可能在 ${attentionFactors.join('、')} 等领域感受到了一些压力或困扰。这可能是身心发出的信号，提醒我们需要稍作调整、给予自己更多关照。下方的因子详解将为您提供更具体的参考。</p>`;
-            } else {
-                analysisHtml += `<p>恭喜您！本次评估的所有因子均在正常范围内，显示出您拥有非常健康的心理状态和出色的适应能力。请继续保持积极的生活方式，珍视这份内心的平和与力量。</p>`;
-            }
-            analysisHtml += `<p>请记住，测评结果是对您当前状态的一个快照，而非永久标签。每个挑战背后都隐藏着成长的契机，您拥有强大的内在力量去应对一切。</p>`;
-
-
-            // 以下代码与上一版相同，为简洁省略，完整版已包含在上方
-            let factorTableHtml = `<table style="font-size: 14px; width: 100%; border-collapse: collapse; text-align: left;"><thead style="background-color: #f8faf9;"><tr><th style="padding: 12px 15px; font-weight: 600;">因子名称</th><th style="padding: 12px 15px; font-weight: 600;">总分</th><th style="padding: 12px 15px; font-weight: 600;">均分</th><th style="padding: 12px 15px; font-weight: 600;">情况</th></tr></thead><tbody>`;
-            factorDetails.forEach(f => { factorTableHtml += `<tr style="border-top: 1px solid var(--border-color);"><td style="padding: 12px 15px;">${f.name}</td><td style="padding: 12px 15px;">${f.totalScore}</td><td style="padding: 12px 15px;">${f.averageScore.toFixed(2)}</td><td style="padding: 12px 15px; font-weight: bold; color: ${f.status.color};">${f.status.text}</td></tr>`; });
-            factorTableHtml += `</tbody></table>`;
-            let explanationsHtml = '';
-            detailedExplanations.forEach(e => { explanationsHtml += `<div class="card"><h4 style="display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 15px; color: var(--text-color);">${e.name}评估：<span style="margin-left: 10px; font-size: 16px; font-weight: bold; color: ${e.status.color};">${e.status.text}</span></h4><p><strong>特点表现：</strong>${e.symptoms}</p><p><strong>温暖建议：</strong>${e.advice}</p></div>`; });
-            resultScreen.innerHTML = `<div class="card report-section"><h2 style="font-size: 26px;">综合评估报告</h2><div class="stats-grid"><div class="stat-box"><h4 >SCL-90 总分</h4><p style="color: ${overallAssessment.color};">${stats.totalScore}</p></div><div class="stat-box"><h4>单项平均分</h4><p>${stats.itemAverageScore}</p></div><div class="stat-box"><h4>阳性因子数</h4><p>${stats.positiveFactorCount}</p></div><div class="stat-box"><h4>阳性因子占比</h4><p>${stats.positiveFactorPercentage}</p></div></div><div style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 25px;"><h3 style="font-size: 22px;">您的心理健康状态</h3><p style="font-size: 32px; font-weight: bold; margin: 10px 0; color: ${overallAssessment.color};">${overallAssessment.text}</p><p style="font-size: 13px; color: #888;">本次测评满分为450分(90题 x 5分)。通常认为，因子均分大于 2.0 需引起关注。</p></div></div><div class="card report-section"><h3 style="font-size: 22px;">因子评估情况</h3>${factorTableHtml}</div><div class="card report-section"><h3 style="font-size: 22px;">因子发展程度</h3><div id="radar-chart-container"><canvas id="radarChart"></canvas></div></div><div class="card report-section result-analysis" style="background-color: #f8faf9; border-left: 5px solid var(--primary-green); padding: 20px 25px; border-radius: 12px;"><h3 style="font-size: 22px;">结果解析</h3>${analysisHtml}</div><div class="report-section detailed-explanation"><h2 style="font-size: 26px; margin-bottom: 25px;">因子详解</h2>${explanationsHtml}</div><div class="card report-section"><h3 style="font-size: 22px;">评分分级标准参考</h3><table style="font-size: 13px; width: 100%; border-collapse: separate; border-spacing: 5px;"><tbody><tr><td style="padding: 10px; border-radius: 8px; color: white; text-align: center; background-color: #28a745;">正常<br>(均分 &lt; 1.5)</td><td style="padding: 10px; border-radius: 8px; color: white; text-align: center; background-color: #ffc107;">轻度<br>(1.5 - 2.5)</td><td style="padding: 10px; border-radius: 8px; color: white; text-align: center; background-color: #fd7e14;">中度<br>(2.5 - 3.5)</td><td style="padding: 10px; border-radius: 8px; color: white; text-align: center; background-color: #dc3545;">偏重<br>(3.5 - 4.5)</td><td style="padding: 10px; border-radius: 8px; color: white; text-align: center; background-color: #a21222;">严重<br>(&ge; 4.5)</td></tr></tbody></table></div><div style="text-align:center; margin: 40px 0;"><button class="btn" onclick="window.location.reload()" style="background-color: #888; background-image: none; max-width: 300px;">重新测评</button></div>`;
-            const ctx = document.getElementById('radarChart').getContext('d'); new Chart(ctx, { type: 'radar', data: { labels: factorDetails.map(f => f.name), datasets: [{ label: '因子均分', data: factorDetails.map(f => f.averageScore), backgroundColor: "rgba(45, 183, 149, 0.2)", borderColor: "rgba(45, 183, 149, 1)", pointBackgroundColor: "rgba(45, 183, 149, 1)", pointBorderColor: "#fff", pointHoverBackgroundColor: "#fff", pointHoverBorderColor: "rgba(45, 183, 149, 1)" }] }, options: { scales: { r: { angleLines: { color: "rgba(0, 0, 0, 0.08)" }, suggestedMin: 0, suggestedMax: 5, grid: { color: "rgba(0, 0, 0, 0.08)" }, pointLabels: { font: { size: 13 }, color: getComputedStyle(document.body).getPropertyValue("--text-secondary") }, ticks: { backdropColor: "rgba(255, 255, 255, 0.8)", color: getComputedStyle(document.body).getPropertyValue("--text-secondary") } } }, plugins: { legend: { display: false } } } });
-        }
+        // --- 【修改1】全新答题流程JS逻辑 ---
+        function startTest(){authScreen.style.display="none",testScreen.style.display="block",renderCurrentQuestion()}
+        function renderCurrentQuestion(){const e=questions[currentQuestionIndex];let t=`<div class="card"><div id="progress-container"><div id="progress-bar"></div></div><div id="progress-text">${currentQuestionIndex+1} / ${questions.length}</div><div class="question-content"><p class="question-text">${e.text}</p><div class="options-group" id="options-for-q${e.id}">`;options.forEach(s=>{const n=`q${e.id}_${s.score}`,o=userAnswers[currentQuestionIndex]===s.score?"checked":"";t+=`<input type="radio" id="${n}" name="q${e.id}" value="${s.score}" ${o}><label for="${n}">${s.text}</label>`});t+=`</div></div><div class="navigation-buttons"><button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()">上一题</button><button class="btn" id="nextBtn" onclick="nextQuestion()">下一题</button></div><div class="error-message" id="questionError"></div></div>`;testScreen.innerHTML=t;const s=testScreen.querySelector(`#options-for-q${e.id}`);s.addEventListener("change",e=>{userAnswers[currentQuestionIndex]=parseInt(e.target.value,10),document.getElementById("questionError").textContent=""}),updateProgress(),updateNavButtons()}
+        function updateProgress(){const e=(currentQuestionIndex+1)/questions.length*100;document.getElementById("progress-bar").style.width=`${e}%`}
+        function updateNavButtons(){const e=document.getElementById("prevBtn"),t=document.getElementById("nextBtn");e.style.visibility=0===currentQuestionIndex?"hidden":"visible",t.textContent=currentQuestionIndex===questions.length-1?"提交并查看结果":"下一题"}
+        function nextQuestion(){if(null===userAnswers[currentQuestionIndex])return void(document.getElementById("questionError").textContent="请先选择一个选项");currentQuestionIndex<questions.length-1?(currentQuestionIndex++,renderCurrentQuestion()):handleSubmit()}
+        function prevQuestion(){currentQuestionIndex>0&&(currentQuestionIndex--,renderCurrentQuestion())}
+        async function handleSubmit(){testScreen.style.display="none",resultScreen.innerHTML=`<div class="card" style="text-align:center;"><h2>正在为您分析结果...</h2><div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-green); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;"></div></div><style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>`,resultScreen.style.display="block";const e=questions.map((e,t)=>({id:e.id,score:userAnswers[t]}));try{const t=await fetch(`${API_URL}/api/submit`,{method:"POST",headers:{"Content-Type":"application/json","x-auth-token":tempToken},body:JSON.stringify({answers:e})});if(!t.ok){const e=await t.json();throw new Error(e.error||`服务器错误: ${t.status}`)}const s=await t.json();displayResult(s)}catch(e){resultScreen.innerHTML=`<div class="card"><h2 style="color: var(--error-color);">分析失败</h2><p style="text-align:center;">无法连接到分析服务器或服务器返回错误。<br><br><strong>错误详情:</strong> ${e.message}</p> <button class="btn" onclick="window.location.reload()" style="background-color: #888; background-image: none;">返回重试</button></div>`}}
+        function displayResult(result){const{stats:e,overallAssessment:t,factorDetails:s,detailedExplanations:n}=result,o=s.filter(e=>"normal"===e.status.level).map(e=>`“${e.name}”`),r=s.filter(e=>"normal"!==e.status.level).map(e=>`“${e.name}”`);let a="";o.length>0?a+=`<p>在本次评估中，您在 ${o.join("、")} 等方面表现出色，心理状态稳定，这是您宝贵的内在资源和优势所在。请继续保持这些积极的状态！</p>`:a,r.length>0?a+=`<p>结果提示您近期可能在 ${r.join("、")} 等领域感受到了一些压力或困扰。这可能是身心发出的信号，提醒我们需要稍作调整、给予自己更多关照。下方的因子详解将为您提供更具体的参考。</p>`:a+=`<p>恭喜您！本次评估的所有因子均在正常范围内，显示出您拥有非常健康的心理状态和出色的适应能力。请继续保持积极的生活方式，珍视这份内心的平和与力量。</p>`,a+=`<p>请记住，测评结果是对您当前状态的一个快照，而非永久标签。每个挑战背后都隐藏着成长的契机，您拥有强大的内在力量去应对一切。</p>`;let l=`<table class="responsive-table"><thead><tr><th>因子名称</th><th>总分</th><th>均分</th><th>情况</th></tr></thead><tbody>`;s.forEach(e=>{l+=`<tr><td data-label="因子名称">${e.name}</td><td data-label="总分">${e.totalScore}</td><td data-label="均分">${e.averageScore.toFixed(2)}</td><td data-label="情况" style="font-weight: bold; color: ${e.status.color};">${e.status.text}</td></tr>`}),l+="</tbody></table>";let i="";n.forEach(e=>{i+=`<div class="card"><h4 style="display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 15px; color: var(--text-color);">${e.name}评估：<span style="margin-left: 10px; font-size: 16px; font-weight: bold; color: ${e.status.color};">${e.status.text}</span></h4><p><strong>特点表现：</strong>${e.symptoms}</p><p class="explanation-advice"><strong>温暖建议：</strong>${e.advice}</p></div>`}),resultScreen.innerHTML=`<div class="card report-section"><h2 style="font-size: 26px;">综合评估报告</h2><div class="stats-grid"><div class="stat-box"><h4>SCL-90 总分</h4><p style="color: ${t.color};">${e.totalScore}</p></div><div class="stat-box"><h4>单项平均分</h4><p>${e.itemAverageScore}</p></div><div class="stat-box"><h4>阳性因子数</h4><p>${e.positiveFactorCount}</p></div><div class="stat-box"><h4>阳性因子占比</h4><p>${e.positiveFactorPercentage}</p></div></div><div style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 25px;"><h3 style="font-size: 22px;">您的心理健康状态</h3><p style="font-size: 32px; font-weight: bold; margin: 10px 0; color: ${t.color};">${t.text}</p><p style="font-size: 13px; color: #888;">本次测评满分为450分(90题 x 5分)。通常认为，因子均分大于 2.0 需引起关注。</p></div></div><div class="card report-section"><h3 style="font-size: 22px;">因子评估情况</h3>${l}</div><div class="card report-section"><h3 style="font-size: 22px;">因子发展程度</h3><div id="radar-chart-container"><canvas id="radarChart"></canvas></div></div><div class="card report-section result-analysis" style="background-color: #f8faf9; border-left: 5px solid var(--primary-green); padding: 20px 25px; border-radius: 12px;"><h3 style="font-size: 22px;">结果解析</h3>${a}</div><div class="report-section detailed-explanation"><h2 style="font-size: 26px; margin-bottom: 25px;">因子详解</h2>${i}</div><div class="card report-section"><h3 style="font-size: 22px;">评分分级标准参考</h3><table class="grading-standard-table"><tbody><tr><td style="background-color: #28a745;">正常<br>(均分 &lt; 1.5)</td><td style="background-color: #ffc107;">轻度<br>(1.5 - 2.5)</td><td style="background-color: #fd7e14;">中度<br>(2.5 - 3.5)</td><td style="background-color: #dc3545;">偏重<br>(3.5 - 4.5)</td><td style="background-color: #a21222;">严重<br>(&ge; 4.5)</td></tr></tbody></table></div><div style="text-align:center; margin: 40px 0;"><button class="btn" onclick="window.location.reload()" style="background-color: #888; background-image: none; max-width: 300px;">重新测评</button></div>`;const c=document.getElementById("radarChart").getContext("2d");new Chart(c,{type:"radar",data:{labels:s.map(e=>e.name),datasets:[{label:"因子均分",data:s.map(e=>e.averageScore),backgroundColor:"rgba(45, 183, 149, 0.2)",borderColor:"rgba(45, 183, 149, 1)",pointBackgroundColor:"rgba(45, 183, 149, 1)",pointBorderColor:"#fff",pointHoverBackgroundColor:"#fff",pointHoverBorderColor:"rgba(45, 183, 149, 1)"}]},options:{responsive:!0,maintainAspectRatio:!1,scales:{r:{angleLines:{color:"rgba(0, 0, 0, 0.08)"},suggestedMin:0,suggestedMax:5,grid:{color:"rgba(0, 0, 0, 0.08)"},pointLabels:{font:{size:11},color:getComputedStyle(document.body).getPropertyValue("--text-secondary")},ticks:{display:!1}}}}})}
     </script>
 </body>
 </html>
